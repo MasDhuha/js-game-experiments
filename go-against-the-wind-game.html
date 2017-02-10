@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>JQuery/Javascript Experiment</title>
+	<style type="text/css">
+		* {
+			font-family: 'Calibri', serif;
+		}
+		.body {
+			padding: 50px;
+			background: #eee;
+		}
+		h3>small {
+			padding: 5px;
+			background: #ddd;
+		}
+		.dot {
+			width: 15px;
+			height: 15px;
+			border-radius: 90em;
+			background: red;
+			transition: all 0.5s cubic-bezier(0.69, 0, 0, 0.97); /*use ease if cubic-bezier not common*/
+			position: fixed;
+			bottom: 50px;
+			left: 10px;
+		}
+		.finish-line {
+			position: fixed;
+			left: 200px;
+			bottom: 49px;
+			width: 2px;
+			height: 50px;
+			background: black;
+		}
+		.instruction {
+			background: #ddd;
+			font-size: 14px;
+			padding: 10px;
+		}
+		.instruction code {
+			font-family: monospace;
+			font-size: 12px;
+			border: 1px solid #444;
+			background: #222;
+			color: white;
+			padding: 2px;
+		}
+		.score {
+			font-size: 20px;
+			font-weight: bolder;
+		}
+	</style>
+</head>
+<body>
+	<div>
+		<h3>Go Against the Wind. <small>a jQuery/javascript game experiment</small></h3>
+		<p class="instruction">
+			Try to get to the finish line<i>(the black vertical line)</i> to win. <br>
+			Use <code>Dash/Jump</code> to dash and jump to try to get to the finish line. <br>
+			Use <code>Back</code> if you want to start again. <br>
+			<b>Note.</b> Wind is blowing you back to starting so you might want to <code>dash/jump</code> more than the wind. :D
+		</p>
+		<p>
+			Menus: 
+			<button id="dash">Dash/Jump</button> <button id="back">BACK</button> SCORE : <span class="score">0</span> points
+		</p>
+	</div>
+	<div class="cont">
+		<div class="dot"></div>
+		<div class="finish-line"></div>
+	</div>
+	<div class="land"></div>
+
+	<script type="text/javascript" src="jquery.js"></script>	
+	<script type="text/javascript">
+	// Backup javascript (require jquery to work)
+	$(function() {
+		var dash_btn = $('#dash'),
+			back_btn = $('#back'),
+			charac = $('.dot'),
+			scoreBoard = $('.score');
+
+		var dash = function() {
+			var m = getCharacLeftPoints();	
+			var rand_m = parseInt(Math.random()*100);	
+			m+=rand_m;
+			charac.css({'left':m});
+		};
+
+		var getCharacLeftPoints = function() {
+			return parseInt(charac.css('left').replace('px', ''));
+		};
+
+		var pullGravity = function() {
+			setTimeout(function() {
+				charac.css({'bottom': 50});
+			}, 200);
+		}
+
+		var jump = function() {
+			var alt_jump = 50+parseInt(Math.random()*50);
+			dash();
+			charac.css({'bottom': alt_jump});
+			tallyScore();
+			pullGravity();
+			pullRandomBack();
+			checkWinning();
+		};
+
+		var back = function() {
+			charac.css({'left': 10, 'bottom':50});
+		};
+
+		var pullRandomBack = function() {
+			var rand = parseInt(Math.random()*10);
+			var is_backable = rand > 5;
+			console.log(rand, is_backable);
+			if(is_backable) setTimeout(back, rand+20);
+		};
+
+		var tallyScore = function() {
+			var score = getCharacLeftPoints(); 
+			scoreBoard.html(score);
+		};
+
+		var checkWinning = function() {
+			var left_pos = getCharacLeftPoints();
+			var is_winning = left_pos >= 200;
+			if(is_winning) celebrate();
+		};
+
+		var celebrate = function() {
+			alert('Congratulations, you have reached the finish line.');
+			playAgain();
+		};
+
+		var playAgain = function() {
+			var still_play = confirm('Want to play again');
+			if(still_play) {
+				alert('Lets play again');
+				back();
+			} else {
+				alert('Thanks for playing, hope you like it.');
+			}
+		};
+
+		dash_btn.click(jump);
+		back_btn.click(back);
+
+		$(document).keypress(function(e){
+		    switch((e.keyCode ? e.keyCode : e.which)){
+		        //case 13: // Enter
+		        //case 27: // Esc
+		        //case 32: // Space
+		        //case 37:   // Left Arrow
+		        //case 38: // Up Arrow
+		        //case 39:   // Right Arrow
+		        //case 40: // Down Arrow
+		        case 32:
+		        	jump();
+		        	break;
+		        case 13:
+		        	back();
+		        	break;
+		    }
+		});
+
+		var goLeft = function() {
+		  console.log('to left');
+		};
+
+		var goRight = function() {
+		  console.log('to right');
+		};
+
+		var goUp = function() {
+		  console.log('to up');
+		};
+
+		var goDown = function() {
+		  console.log('to down');
+		};
+
+		$(document).on('keydown',function(e){
+		   var act={37:goLeft, 38:goUp, 39:goRight, 40:goDown};
+		   if(act[e.which]) var a=new act[e.which];
+
+		});
+	});
+	</script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Direct the Dot</title>
+    <style type="text/css">
+        .dot {
+          width: 15px;
+          height: 15px;
+          position: absolute;
+          background: green;
+          border-radius: 50em;
+          transition: all 0.6s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="dot"></div>
+    <script type="text/javascript" src="jquery.js"></script>
+    <script type="text/javascript">
+        var dot = $('.dot');
+        var len = 20;
+        var speedUp = function() {
+          len+=10;
+        };
+        var getTop = function() {
+            return parseInt(dot.css('top').replace('px', ''));
+        };
+        var getLeft = function() {
+            return parseInt(dot.css('left').replace('px', ''));
+        };
+        var setTop = function(top) {
+            dot.css({'top' : top});
+        };
+        var setLeft = function(left) {
+            dot.css({'left': left});
+        };
+        var goLeft = function() {
+          var left = ( getLeft() - len ) > len ? getLeft() - len : len;
+          setLeft(left);
+        };
+
+        var goRight = function() {
+          var left = ( getLeft() + len ) < 1000 ? getLeft() + len : len;
+          setLeft(left);
+        };
+
+        var goUp = function() {
+          var top = ( getTop() + len ) > len ? getTop() - len : len;
+          setTop(top); 
+        };
+
+        var goDown = function() {
+          var top = ( getTop() + len ) < 1000 ? getTop() + len : len;
+          setTop(top);
+        };
+
+        var act = {37: goLeft, 38: goUp, 39: goRight, 40: goDown, 32: speedUp};
+        $(document).on('keydown', function(e) {
+          if (act[e.which]) var a = new act[e.which];
+        });
+        $(document).on('keyup', function(e) {
+           switch((e.keyCode ? e.keyCode : e.which)){
+              case 32:
+                len=20;
+                break;
+           }          
+        });
+
+    </script>
+</body>
+</html>
